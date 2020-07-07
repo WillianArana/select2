@@ -11,14 +11,18 @@ import {
   Renderer2,
   AfterViewInit,
   SimpleChanges,
-  OnChanges
+  OnChanges,
+  ContentChildren,
+  QueryList
 } from '@angular/core';
 
-import { BaseSelect2Component } from './models/base-select2.component';
-import { IOptionData } from './models/ioption-data';
+
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { Options } from 'select2';
+import { BaseSelect2Component } from 'src/app/models/base-select2.component';
+import { IOptionData } from 'src/app/models/ioption-data';
+import { Option2Component } from '../option2/option2.component';
 
 declare var $: any;
 
@@ -41,7 +45,9 @@ const NG_SELECT_TWO: any = {
 export class Select2Component extends BaseSelect2Component implements OnChanges, AfterViewInit {
   @ViewChild('selector', { static: true }) selector: ElementRef;
 
-  @Input() data: Array<IOptionData>;
+  @ContentChildren(Option2Component) options2!: QueryList<Option2Component>;
+
+  @Input() data: Array<IOptionData> = [];
   @Input() dropdownParent = '';
   @Input() allowClear = false;
   @Input() width: string;
@@ -130,11 +136,18 @@ export class Select2Component extends BaseSelect2Component implements OnChanges,
       this.renderer.setProperty(this.selector.nativeElement, 'innerHTML', '');
     }
 
+    if (this?.data.length === 0 && this.options2?.length > 0) {
+      const data = this.options2.map(op => op.content);
+      this.data = data;
+    }
+
     let options: Options = {
       data: this.data,
       width: (this.width) ? this.width : 'resolve',
       placeholder: this.placeholder
     };
+
+
 
     if (this.dropdownParent) {
       options = {
