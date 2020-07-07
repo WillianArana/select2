@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'select2';
+  fruit!: string;
+
+  fruitList = ['abacate', 'abacaxi', 'banana', 'maça'];
+
 }
